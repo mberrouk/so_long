@@ -18,12 +18,8 @@ typedef struct s_info
 
 typedef struct s_pos
 {
-	char **map;
-	void *m;
-	void *w; //??
 	int r;
 	int c;
-	int coin;
 }	t_pos; 
 
 typedef struct s_donne

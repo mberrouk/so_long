@@ -11,10 +11,28 @@ int check_param(char *parm)
 	return (1);
  }
 
-void	err_msg(char *str)
+void 	last_check(char **map, t_pos E)
 {
-	write(1, str, ft_strlen(str, '\0'));
-	exit(1);
+	int	x;
+	int y;
+	
+	y = 0;
+	while (map[y])
+	{
+		x = 0;
+		while (map[y][x])
+		{
+			if (map[y][x] && map[y][x] != 'F' && map[y][x] != '1'
+					&& map[y][x] != '0' && map[y][x] != 'E')
+						err_msg("Invalid map : you can't win the game!");
+			x++;
+		}
+		y++;
+	}
+	if (map[E.r][E.c - 1] != 'F' && map[E.r][E.c + 1] != 'F' 
+						&& map[E.r - 1][E.c] != 'F' && map[E.r + 1][E.c] != 'F')
+						err_msg("Invalid map : you can't win the game!");
+
 }
 
 void	check_a_solution(char **map, t_info data, int x, int y)

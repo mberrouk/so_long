@@ -39,20 +39,6 @@ char	*ft_strjoin(char *s1, char *s2, int len)
 	return (resl);
 }
 
-void	ft_clean(char **str)
-{
-	int i;
-	
-	i = 0;
-	while (str[i])
-	{
-		free(str[i]);
-		i++;
-	}
-	free(str);
-	//err_msg("malloc failed !");
-}
-
 char	**ft_split(char *str, t_info *data)
 {
 	char	**resl;
@@ -72,10 +58,7 @@ char	**ft_split(char *str, t_info *data)
 		y = 0;
 		resl[j] = malloc(sizeof(char) * (data->n_column + 1));
 		if (!resl)
-		{
 			err_msg("malloc failed !");
-			ft_clean(resl);
-		}
 		while (str[i + y] && str[i + y] != '\n')
 		{
 			resl[j][y] = str[i + y];
@@ -110,4 +93,36 @@ void	get_position(char **map, char target, t_pos *position)
 	}
 	position->r = y;
 	position->c = x;
+}
+
+char *try2read_map(char *name_file)
+{
+	char	*buf;
+	char	*map;
+	int	n_rbit;
+	int	fd;
+	int len;
+	
+	fd = open(name_file, O_RDONLY);
+	buf = malloc(sizeof(char) * 11);
+	n_rbit = 1;
+	map = NULL;
+	len = 0;
+	while (n_rbit)
+	{
+		n_rbit = read(fd, buf, 10);
+		if (n_rbit < 0)
+		{
+			if (map)
+				free(map);
+			free(buf);
+			return (NULL);
+		}
+		buf[n_rbit] = '\0';
+		len += n_rbit;
+		if (n_rbit)
+			map = ft_strjoin(map, buf, len);
+	}
+	free(buf);
+	return (map);
 }
