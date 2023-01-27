@@ -18,9 +18,9 @@ typedef struct s_info
 
 typedef struct s_pos
 {
-	int r;
-	int c;
-}	t_pos; 
+	int 	r;
+	int 	c;
+}				t_pos; 
 
 typedef struct s_donne
 {
@@ -61,5 +61,6 @@ void 	rendering_imgs(char *filename, void *mlx, void *mlx_win, int wid, int hei)
 void 	ato_graphique(char **map, void *mlx_ptr, void *mlx_win_ptr);
 void 	movingplayer(char **map, void *mlx, void *mlx_win);
 void	launch_game(char **map, t_donne info);
+void 	ft_putnbr(int nb);
 
 #endif

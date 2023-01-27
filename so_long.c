@@ -16,6 +16,7 @@ int get_in_step(int keycode, t_donne *var)
 {
 	int c;
 	int r;
+	static int step;
 	
 	r = var->player.r;
 	c = var->player.c;
@@ -36,6 +37,8 @@ int get_in_step(int keycode, t_donne *var)
 		var->map[r][c] = '0';
 		var->data.n_collec -= 1;
 	}
+	ft_putnbr(++step);
+	write(1, "\n", 1);
 	var->player.c = c;
 	var->player.r = r;
 	return (1);

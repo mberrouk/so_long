@@ -1,10 +1,5 @@
 #include "so_long.h"
 
-void err_msg(char *str)
-{
-	write(1, str, ft_strlen(str, '\0'));
-	exit(1);
-}
 int	main(int ac, char *av[])
 {
 	char			*str;
