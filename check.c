@@ -20,7 +20,7 @@ void	err_msg(char *str)
 void	check_a_solution(char **map, t_info data, int x, int y)
 {
 	if (x >= data.n_column || x < 0 || y >= data.row_len || y < 0 
-			|| map[y][x] == 'F' || map[y][x] == '1')
+			|| map[y][x] == 'F' || map[y][x] == '1' || map[y][x] == 'E')
 			return ;
 	map[y][x] = 'F';
 	check_a_solution(map, data, x + 1, y);

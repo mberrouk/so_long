@@ -12,44 +12,61 @@ void 	rendering_imgs(char *filename, void *mlx, void *mlx_win, int wid, int hei)
 	mlx_put_image_to_window(mlx, mlx_win, img.img, wid, hei);
 }
 
-int key_hook(int keycode, t_pos *var)
+int get_in_step(int keycode, t_donne *var)
 {
-	printf("X");
+	int c;
+	int r;
+	
+	r = var->player.r;
+	c = var->player.c;
 	if (keycode == 2)
-	{
-		rendering_imgs("./floor.xpm", var->m, var->w, (var->c) * 60, (var->r) * 60);
-		rendering_imgs("./player.xpm", var->m, var->w, (var->c += 1) * 60, (var->r) * 60);
-	}
+		c += 1;
 	else if (keycode == 0)
-	{
-		rendering_imgs("./floor.xpm", var->m, var->w, (var->c) * 60, (var->r) * 60);
-		rendering_imgs("./player.xpm", var->m, var->w, (var->c -= 1) * 60, (var->r) * 60);
-	}
+		c -= 1;
 	else if (keycode == 13)
-	{
-		rendering_imgs("./floor.xpm", var->m, var->w, (var->c) * 60, (var->r) * 60);
-		rendering_imgs("./player.xpm", var->m, var->w, (var->c) * 60, (var->r -= 1) * 60);
-	}
+ 		r -= 1;
 	else if (keycode == 1)
-	{
-		rendering_imgs("./floor.xpm", var->m, var->w, (var->c) * 60, (var->r) * 60);
-		rendering_imgs("./player.xpm", var->m, var->w, (var->c) * 60, (var->r += 1) * 60);
-	}
+		r += 1;
+	if (var->map[r][c] == '1' || (var->map[r][c] == 'E' && var->data.n_collec))
 		return (0);
+	if (var->map[r][c] == 'C')
+	{
+		var->map[r][c] = '0';
+		var->data.n_collec -= 1;
+	}
+	var->player.c = c;
+	var->player.r = r;
+	return (1);
 }
 
-void movingplayer(char **map, void *mlx, void *mlx_win)
+int key_hook(int keycode, t_donne *var)
 {
-	t_vars vars;
-	t_pos player;
-	int key;
-	int (*ptr)(int, t_vars *) = key_hook;
+	int c;
+	int r;
 
-	vars.mlx = mlx_init();
-	vars.win = mlx_new_window(vars.mlx, 640, 480, "Hello world!");
-	get_position(map, 'P', &player);
-	mlx_key_hook(vars.win, ptr, &vars);
-	mlx_loop(vars.mlx);
+	r = var->player.r;
+	c = var->player.c;
+	if (!get_in_step(keycode, var))
+		return  (0);
+	rendering_imgs("./floor.xpm", var->mlx, var->win, c * 60, r * 60);
+	rendering_imgs("./player.xpm", var->mlx, var->win, (var->player.c) * 60, (var->player.r) * 60);
+	return (0);
+}
+
+void 	launch_game(char **map, t_donne info)
+{
+	void *mlx;
+	void *mlx_win;
+	t_pos pla;
+
+	mlx = mlx_init();
+	mlx_win = mlx_new_window(mlx, info.data.n_column * 60, info.data.row_len * 60, "|SO_LONG|");
+	info.mlx = mlx;
+	info.win = mlx_win;
+	info.map = map;
+	ato_graphique(map, mlx, mlx_win);
+	mlx_hook(mlx_win, 2, 0, key_hook, &info);
+	mlx_loop(mlx);
 }
 
 void 	ato_graphique(char **map, void *mlx_ptr, void *mlx_win_ptr)
@@ -79,7 +96,7 @@ void 	ato_graphique(char **map, void *mlx_ptr, void *mlx_win_ptr)
 	}
 }
 
-void 	last_check(char **map)
+void 	last_check(char **map, t_pos E)
 {
 	int	x;
 	int y;
@@ -91,7 +108,7 @@ void 	last_check(char **map)
 		while (map[y][x])
 		{
 			if (map[y][x] && map[y][x] != 'F' && map[y][x] != '1'
-					&& map[y][x] != '0')
+					&& map[y][x] != '0' && map[y][x] != 'E')
 			{
 				ft_clean(map);
 				err_msg("Invalid map : you can't win the game!");
@@ -100,6 +117,10 @@ void 	last_check(char **map)
 		}
 		y++;
 	}
+	if (map[E.r][E.c - 1] != 'F' && map[E.r][E.c + 1] != 'F' 
+						&& map[E.r - 1][E.c] != 'F' && map[E.r + 1][E.c] != 'F')
+						err_msg("Invalid map : you can't win the game!");
+
 }
 
 char *try2read_map(char *name_file)
